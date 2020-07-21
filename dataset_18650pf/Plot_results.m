@@ -10,13 +10,14 @@ figure
 hold on
 plot(meas.Time,meas.Ah,'r')
 grid on
-title("Ah vs Time")
+title("Ah vs Time") 
 
 figure
 plot(meas.Time,meas.Current,'r')
 hold on
 %plot(meas_n20.Time,meas_n20.Current)
 grid on
+title("Current vs Time")
 
 
 figure
