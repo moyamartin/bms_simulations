@@ -1,4 +1,5 @@
-load('03-11-17_08.47 25degC_5Pulse_HPPC_Pan18650PF.mat')
+% Pasaje relativo al data set. Debe ubicarse en bms_simulation\Kalman
+load('..\dataset_18650pf\Panasonic 18650PF Data\25degC\5 pulse disch\03-11-17_08.47 25degC_5Pulse_HPPC_Pan18650PF.mat')
 
 %CurrentPeakValue=[1.45 2.9 5.8 11.6 17.4];
 %VoltajeVariation=[0.0370 0.1080 0.21 0.3970 0.6160];
@@ -17,6 +18,10 @@ load('03-11-17_08.47 25degC_5Pulse_HPPC_Pan18650PF.mat')
 %R0=R0-0.00712; %ajuste para evitar tension positiva erronea en rta scalon
 R0=0.0266; %valor obtenido tras el ajuste de Voltaje-I*R0
 
+% Valor de R0 Obtenido a partir de promediar todos los R0(i) de cada pulso
+% de descarga en todos los SOC
+% Da muy cercana al valor ajustado por lucho, R0 = 0.0256
+R0 = Average_R0(Current,Voltage); 
 
 desde=1; %muestra donde comienzo el ploteo
 hasta=195; %muestra donde recorto ploteo
