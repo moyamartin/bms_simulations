@@ -59,11 +59,11 @@ temp = [];
 soc = [];
 
 for i = 1:length(file_paths)
-    buffer = load(folder_path + file_paths(i));
+    buffer = load(folder_path + file_paths(i)); 
     voltage_augmented = awgn(buffer.meas.Voltage, 10);
     voltage = [voltage; voltage_augmented];
     avg_voltage = [avg_voltage; movmean(voltage_augmented, avg_sample)];
-    current_augmented = awgn(buffer.meas.Current, 10)*.97; 
+    current_augmented = awgn(buffer.meas.Current*.97, 10); 
     current = [current; current_augmented];
     avg_current = [avg_current; movmean(current_augmented, avg_sample)];
     temp_augmented = awgn(buffer.meas.Battery_Temp_degC, 10);
@@ -79,4 +79,4 @@ for i = 1:length(file_paths)
     end
 end
 
-save('training_data_25_awg_gainneg_A', 'voltage', 'avg_voltage', 'current', 'avg_current', 'temp', 'soc')
+save('training_data_25_awgn_gainneg_A', 'voltage', 'avg_voltage', 'current', 'avg_current', 'temp', 'soc')
