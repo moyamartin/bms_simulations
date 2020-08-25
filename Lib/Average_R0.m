@@ -20,12 +20,12 @@ function R0 = Average_R0(I_ensayo,V_ensayo)
 i = 1;
 R0 = 0;
 
-for n = 1:(length(I_ensayo)-1)
+flancos = flanks(I_ensayo, 50);
 
-    delta(n) = abs( I_ensayo(n+1) - I_ensayo(n) );
-        
-    if (delta(n) > 1.5*abs(I_ensayo(n)))
-        
+for n = 1:(length(I_ensayo))
+    
+    if (flancos(n) == -1)
+        %hay un flanco descendente
         Vmax(i)= V_ensayo(n);
         Vmin(i)= V_ensayo(n+1); 
         Imin(i)= I_ensayo(n+1);
