@@ -5,7 +5,8 @@
 at25degC_5Pulse_HPPC_Pan18650PF = ['..\dataset_18650pf\25degC\5 pulse disch\03-11-17_08.47 25degC_5Pulse_HPPC_Pan18650PF.mat'];
 load(at25degC_5Pulse_HPPC_Pan18650PF);
 
-Current = meas.Current;
+
+Current = [ meas.Time, meas.Current];
 Voltage = meas.Voltage;
 Time = meas.Time;
 
