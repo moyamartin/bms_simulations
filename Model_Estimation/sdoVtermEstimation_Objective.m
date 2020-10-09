@@ -24,6 +24,8 @@ function vals = sdoVtermEstimation_Objective(v,Simulator,Exp)
  
 % Copyright 2012-2015 The MathWorks, Inc.
 
+%% Globlasl variables
+global Start Stop
 %%
 % Define a signal tracking requirement to compute how well the model output
 % matches the experiment data. Configure the tracking requirement so that
@@ -45,10 +47,10 @@ Exp  = setEstimatedValues(Exp,v);
 % data.
 %
 Simulator = createSimulator(Exp,Simulator);
-Simulator = sim(Simulator);
+Simulator = sim(Simulator, 'StartTime', Start, 'StopTime', Stop );
 
-SimLog       = find(Simulator.LoggedData,get_param('SingleSOC_Batery_Model','SignalLoggingName'));
-TerminalV = find(SimLog,'TerminalV');
+SimLog      = find(Simulator.LoggedData,get_param('SingleSOC_Batery_Model','SignalLoggingName'));
+TerminalV   = find(SimLog,'TerminalV');
 
 VtermError = evalRequirement(r,TerminalV.Values,Exp.OutputData(1).Values);
 
