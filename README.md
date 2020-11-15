@@ -1,1 +1,1 @@
-# bms_simulations
+# NCR18650PF Battery Model
