@@ -1,0 +1,3 @@
+[submodule "Li-Ion-Battery-parameters-estimator"]
+	path = Li-Ion-Battery-parameters-estimator
+	url = git@github.com:fededc88/Li-Ion-Battery-parameters-estimator.git
