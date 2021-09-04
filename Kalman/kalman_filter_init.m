@@ -11,8 +11,6 @@ function [init_kalman_filter] = ...
 %	filter
 %	n_states: number of states that the linearized system has
 %	n_input: number of observable variables of the system
-%	n_outputs: number of outputs of the system
-
 init_kalman_filter = kalman_filter_struct;
 
 % Initialize x_pred matrix with zeros
