@@ -3,8 +3,9 @@
 % This example simulates the trayectory of a cannon ball and predicts the
 % trayectory of it using a kalman filter
 
-load('trayectory_measurements.mat')
-load('measurements_no_noise.mat')
+addpath('./lib')
+load('datasets/trayectory_measurements.mat')
+load('datasets/measurements_no_noise.mat')
 
 % I was lazy and I didn't want to modify the script from python to export
 % the data as it should be, so I transpose it manually here

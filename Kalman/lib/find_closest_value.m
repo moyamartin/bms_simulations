@@ -15,7 +15,7 @@ if target >= array(start)
 end
 mid = 0;
 while(start < last)
-    mid = round((last - start)/2) + start - 1;
+    mid = round((last - start)/2) + start;
     if(target == array(mid))
         idx = mid;
         return

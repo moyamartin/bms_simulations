@@ -1,8 +1,13 @@
 %% Kalman Filter Matlab Algorithm applied to a battery model %%
 %% Load measurements, matrices and define the kalman filter structure %%
 
+% Add functions dependencies
+addpath('lib')
+
 % Load A, B, C, D matrices
-load('battery_state_space_model_0.1.mat')
+load('datasets/battery_state_space_model_0.01.mat')
+% load soc and ocv lutables
+load('datasets/ocv_vs_soc.mat')
 % Load dataset to test the model
 load(['../dataset_18650pf/25degC/Drive Cycles/' ...
      '03-19-17_14.31 25degC_Cycle_4_Pan18650PF.mat'])
@@ -16,7 +21,7 @@ load(['../dataset_18650pf/25degC/Drive Cycles/' ...
 % P_act: Actual covariance matrix
 % R: Measurement noise
 % Q: Process Noise
-% H: Observatio matrix
+% H: Observation matrix
 % u: input variable
 % NOTE: the structure should be defined as is, if any field has a different
 % name the functions won't work (yeah, I should let the kalman_filter_init
@@ -26,14 +31,14 @@ current_soc = 1;
 SOC_index = find_closest_value(current_soc, SOC_lutable);
 soc_kalman_filter = struct( 'x_act', [0.0; 0.0; 1], 'F', A(:, :, SOC_index), ...
                             'G', B(:, :, SOC_index), ...
-                            'P_act', [1.0, 0.0, 0.0;
-                                      0.0, 1.0, 0.0; 
-                                      0.0, 0.0, 1.0], ...
+                            'P_act', [1e-7, 0.0, 0.0;
+                                      0.0, 1e-7, 0.0; 
+                                      0.0, 0.0, 1e-7], ...
                             'D', D(:, SOC_index), 'R', 0.2, ...
                             'H', C(SOC_index, :), ...
-                            'Q', [.045, 0,   0;
-                                  0,   .005, 0;
-                                  0,   0,   1.5e-9], ...
+                            'Q', [0.0045, 0, 0;
+                                  0, 0.0005, 0;
+                                  0, 0, 1e-10], ...
                             'u', 0.0);
 %% Resample step %%                        
 % Guarda el voltage entre rangos 
@@ -44,12 +49,13 @@ measured_current = meas.Current;
 measured_soc = (meas.Ah/2.9) + 1;
 % save drive cycle time
 time_buffer = meas.Time;
+% sample time 10mS
+Ts = 0.01; 
 fs = 1/Ts;    % Frecuencia de sampleo
 % Resamplea las muestras a una frecuencia
-[current_resampled, timeline] = resample(measured_current, time_buffer, fs, ...
-                                         5, 20);
-[voltage_resampled, ~] = resample(measured_voltage, time_buffer, fs, 5, 20);
-[ah_resample, ~] = resample(measured_soc, time_buffer, fs, 5, 20);
+[current_resampled, timeline] = resample(measured_current, time_buffer, fs, 5, 5);
+[voltage_resampled, ~] = resample(measured_voltage, time_buffer, fs, 5, 5);
+[ah_resample, ~] = resample(measured_soc, time_buffer, fs, 5, 5);
 %% Apply the kalman filter to the battery model %%
 % The init function only initializes unknown matrices to their
 % correspondent sizes, here we are passing the number of states of the
@@ -59,10 +65,8 @@ soc_kalman_filter = kalman_filter_init(soc_kalman_filter, 3, 1);
 
 % store timeline of soc
 soc_array = zeros(length(timeline), 1);
-
-%v_ocv_0 = 3.2;
-
 soc_error = zeros(length(timeline), 1);
+ocv_array = zeros(length(timeline), 1);
 
 % For the extended version update the matrix F and G respectively
 for i = 1:length(timeline)
@@ -81,20 +85,26 @@ end
 %% PLOT RESULTS %%
 % plot the results of the kalman filter, the noisy input and the true value
 figure()
-subplot(311)
-plot(timeline, soc_array, meas.Time, (meas.Ah/2.9) + 1);
+subplot(411)
+plot(timeline, soc_array, timeline, ah_resample);
 title("SoC estimation using a Kalman Filter")
 legend('Estimación del Filtro', 'Medicion del dataset')
 xlabel('t[s]')
 ylabel('%')
 
-subplot(312)
+subplot(412)
 plot(timeline, current_resampled);
 title("Dataset's Current")
 xlabel('t[s]')
 ylabel('I[A]')
 
-subplot(313)
+subplot(413)
+plot(timeline, voltage_resampled);
+title("Dataset's Voltage")
+xlabel('t[s]')
+ylabel('V[V]')
+
+subplot(414)
 plot(timeline, soc_error);
 title("Soc error")
 xlabel('t[s]')
